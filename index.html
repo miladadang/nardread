@@ -41,7 +41,7 @@ body{
   padding-right:max(16px,env(safe-area-inset-right,0px));
   overflow-x:hidden;
 }
-#app{height:100%;min-height:600px;max-height:980px;max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+#app{height:100%;min-height:420px;max-height:980px;max-width:460px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 button{font-family:inherit}
 button:focus-visible{outline:2px solid var(--berry);outline-offset:2px}
 
@@ -108,7 +108,22 @@ h1{margin:0;font-weight:700;font-size:34px;letter-spacing:-.06em;line-height:1}
 .go{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--berry);color:var(--sky);display:grid;place-items:center;cursor:pointer}
 .go:disabled{opacity:.25;cursor:default}
 .go svg{width:22px;height:22px}
-@media (prefers-reduced-motion:reduce){.pc{transition:none}.mk,.caret{animation:none}}
+.go:not(:disabled){animation:ring 1.6s ease-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--berry) 55%,transparent)}80%,100%{box-shadow:0 0 0 12px transparent}}
+.die.ghost{opacity:.35}
+@media (max-height:760px){
+  body{padding-block:4px}
+  #app{gap:6px}
+  h1{font-size:26px}
+  .plate{font-size:19px;padding:3px 9px 5px}
+  .star{font-size:20px}
+  .tags{gap:4px}
+  .tag{min-height:28px;padding:6px 8px;font-size:12px}
+  .strip{min-height:24px}
+  .bar{min-height:54px;padding-block:6px}
+  .go{width:42px;height:42px}
+}
+@media (prefers-reduced-motion:reduce){.pc{transition:none}.mk,.caret,.go:not(:disabled){animation:none}}
 </style>
 
 <div id="app">
@@ -388,11 +403,14 @@ function renderMarks(){
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 function dieHTML(v,used,sm,bot){
   let s='<span class="die'+(bot?' bot':'')+(used?' used':'')+(sm?' sm':'')+'">';
-  for(let k=0;k<9;k++)s+='<i'+(PIPS[v].indexOf(k)>=0?' class="on"':'')+'></i>';
+  for(let k=0;k<9;k++)s+='<i'+((PIPS[v]||[]).indexOf(k)>=0?' class="on"':'')+'></i>';
   return s+'</span>';
 }
 function renderDice(){
-  if(!G.dice.length){diceEl.innerHTML='';return;}
+  if(!G.dice.length){
+    diceEl.innerHTML=dieHTML(0,false,false,false).replace('die','die ghost')+dieHTML(0,false,false,false).replace('die','die ghost');
+    return;
+  }
   const left=G.rem.slice(),sm=G.dice.length>2;
   diceEl.innerHTML=G.dice.map(v=>{
     const j=left.indexOf(v);let used=true;
