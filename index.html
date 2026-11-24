@@ -133,7 +133,7 @@ h1{margin:0;font-weight:700;font-size:34px;letter-spacing:-.06em;line-height:1}
 <div id="app">
   <header class="top">
     <div class="brand">
-      <h1>нарды</h1><span class="plate">длинные</span><span class="star" aria-hidden="true">⁕</span>
+      <h1>нарды</h1><span class="plate">длинные</span><span class="star" aria-hidden="true">⁕ <small style="font:400 10px var(--sans);color:var(--muted)">v6</small></span>
     </div>
     <div class="tags" role="group" aria-label="сложность бота">
       <button class="tag" data-lv="0" type="button">[легко]</button>
@@ -570,6 +570,9 @@ $('#newBtn').addEventListener('click',newGame);
 document.querySelectorAll('.tag[data-lv]').forEach(b=>b.addEventListener('click',()=>{level=+b.dataset.lv;save();render();}));
 if(window.ResizeObserver)new ResizeObserver(()=>{if(G)render();}).observe(board);
 else window.addEventListener('resize',()=>{if(G)render();});
+const showErr=m=>{try{stEl.textContent='ошибка: '+m;}catch(_){}};
+window.addEventListener('error',e=>showErr(e.message+' (строка '+(e.lineno||'?')+')'));
+window.addEventListener('unhandledrejection',e=>showErr(String(e.reason&&e.reason.message||e.reason)));
 newGame();
 })();
 </script>
